@@ -22,22 +22,26 @@ along with Vellum; see the file COPYING. If not, write to the Free
 Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA, or see http://www.gnu.org/.
 """
+from __future__ import print_function
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import rawdoglib.plugins
 
 import re, sys, traceback
 try:
-	import cStringIO as StringIO
+	import io as StringIO
 except:
-	import StringIO
+	import io
 
-class TemplateParser:
+class TemplateParser(object):
 	def __init__(self):
 		self.reg = re.compile('(<%=|<%|%>)')
 
 	def fill_template(self, data, dict, result):
 		fields = self.reg.split(data)
-		fields = filter(lambda x: len(x) <> 0, fields)
+		fields = [x for x in fields if len(x) != 0]
 
 		in_code = 0
 		in_var = 0
@@ -74,15 +78,15 @@ class TemplateParser:
 			if line.rstrip()[-1] == ':':
 				indent += 1
 
-		output = StringIO.StringIO()
+		output = io.StringIO()
 		stdout = sys.stdout
 		sys.stdout = output
-		if "sys" not in dict.keys():
+		if "sys" not in list(dict.keys()):
 			dict["sys"] = sys
 		try:
-			exec code in dict
+			exec(code, dict)
 		except:
-			print >>sys.stderr, "Python exception while expanding template:"
+			print("Python exception while expanding template:", file=sys.stderr)
 			traceback.print_exc()
 			sys.exit(1)
 		sys.stdout = stdout

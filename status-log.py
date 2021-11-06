@@ -1,3 +1,4 @@
+from __future__ import division
 # rawdog plugin to keep a log of how successful we've been fetching feeds
 # Copyright 2007, 2009, 2012, 2013 Adam Sampson <ats@offog.org>
 #
@@ -5,6 +6,10 @@
 # identify timeouts, etc.; it may be better to add another hook to capture the
 # actual status rawdog reports.
 
+from past.builtins import cmp
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import rawdoglib.plugins, time, threading, re, os
 
 display_as = [
@@ -16,7 +21,7 @@ display_as = [
 	(None, "#7fffff"),
 	]
 
-class StatusLogPlugin:
+class StatusLogPlugin(object):
 	def __init__(self):
 		self.lock = threading.Lock()
 		self.logfile = "status-log"
@@ -44,7 +49,7 @@ class StatusLogPlugin:
 					status = "ok-nostatus"
 			elif s in (301, 302):
 				status = "redirect-%d" % s
-			elif s / 100 in (4, 5):
+			elif old_div(s, 100) in (4, 5):
 				status = "error-%d" % s
 			else:
 				status = "ok-%d" % s
@@ -63,7 +68,7 @@ class StatusLogPlugin:
 	def shutdown(self, rawdog, config):
 		period = 12 * 60 * 60
 		division = 60 * 60
-		divs = period / division
+		divs = old_div(period, division)
 
 		starttime = time.time() - period
 		ts = list(time.localtime(starttime))
@@ -110,7 +115,7 @@ class StatusLogPlugin:
 			if url not in feeds:
 				feeds[url] = [(None, None, -1)] * divs
 			try:
-				n = int((int(t) - starttime) / division)
+				n = int(old_div((int(t) - starttime), division))
 			except ValueError:
 				config.log("Bad line in logfile at ", f.tell(), ": ", repr(l))
 				continue
@@ -160,13 +165,13 @@ class StatusLogPlugin:
 		f.write("</tr>\n")
 
 		names = {}
-		for url in feeds.keys():
+		for url in list(feeds.keys()):
 			if url in rawdog.feeds:
 				names[url] = rawdog.feeds[url].get_html_name(config)
 			else:
 				names[url] = url
 
-		urllist = feeds.keys()
+		urllist = list(feeds.keys())
 		urllist.sort(lambda a, b: cmp(names[a].lower(), names[b].lower()))
 		for url in urllist:
 			slots = feeds[url]

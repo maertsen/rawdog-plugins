@@ -1,5 +1,7 @@
 # Copyright 2005 BAM
 
+from builtins import str
+from builtins import object
 import os, time, cgi
 import rawdoglib.plugins, rawdoglib.rawdog
 import libxml2
@@ -86,9 +88,9 @@ schema_xml = """
 
 class XML_Archiver_Exception(Exception): pass
 
-class XML_Archiver:
+class XML_Archiver(object):
     def __init__(self, rawdog, config):
-        if config['defines'].has_key('outputxml'):
+        if 'outputxml' in config['defines']:
             self.out_file = config['defines']['outputxml']
         else:
             self.out_file = 'output.xml.gz'
@@ -98,7 +100,7 @@ class XML_Archiver:
         self.xml_articles = self.xml.xpathEval('/rawdog/articles')[0]
 
         self.xml.setProp('last', str(time.time()))
-        self.sync_bits(self.xml, config['defines'].items())
+        self.sync_bits(self.xml, list(config['defines'].items()))
 
     def doc_open(self):
         if os.path.isfile(self.out_file):
@@ -145,7 +147,7 @@ class XML_Archiver:
         else:
             xml_feed = xml_feed[0]
 
-        if feed_info.has_key('description'):
+        if 'description' in feed_info:
             self.describe(xml_feed, feed_info['description'])
         else:
             self.describe(xml_feed, '')
@@ -156,7 +158,7 @@ class XML_Archiver:
         xml_feed.setProp('update_last', str(feed.last_update))
         xml_feed.setProp('update_next', str(feed.last_update + feed.period))
         xml_feed.setProp('period', str(feed.period))
-        self.sync_bits(xml_feed, feed.args.items())
+        self.sync_bits(xml_feed, list(feed.args.items()))
 
         return True
 
@@ -181,22 +183,22 @@ class XML_Archiver:
         xml_article.setProp('date', str(article.date))
         xml_article.setProp('last_seen', str(article.last_seen))
         xml_article.setProp('added', str(article.added))
-        if entry_info.has_key('link'):
+        if 'link' in entry_info:
             xml_article.setProp('link', entry_info['link'])
 
-        if entry_info.has_key('content'):
+        if 'content' in entry_info:
             for content in entry_info['content']:
                 content = content['value']
-        elif entry_info.has_key('summary_detail'):
+        elif 'summary_detail' in entry_info:
             content = entry_info['summary_detail']['value']
         content = cgi.escape(content).encode('utf8', 'ignore')
         self.describe(xml_article, content)
 
         articles = rawdog.articles
-        if articles.has_key('HACK_sekkrit_flags'):
-            if articles['HACK_sekkrit_flags'].has_key(article.hash):
-            self.sync_bits(xml_article,
-                           articles['HACK_sekkrit_flags'][article.hash].items())
+        if 'HACK_sekkrit_flags' in articles:
+            if article.hash in articles['HACK_sekkrit_flags']:
+                self.sync_bits(xml_article,
+                           list(articles['HACK_sekkrit_flags'][article.hash].items()))
 
         return True
 

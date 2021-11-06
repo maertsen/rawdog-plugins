@@ -12,10 +12,14 @@ and the date of the latest entry in each, and a __paged_output_head__ bit that
 can be included in <head> to add rel="next"/rel="prev" navigation links.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
 import os
 import rawdoglib.plugins
 from rawdoglib.rawdog import DayWriter, write_ascii, format_time, fill_template
-from StringIO import StringIO
+from io import StringIO
 
 articles_per_page = 100
 
@@ -66,7 +70,7 @@ def output_write_files(rawdog, config, articles, article_dates):
 
 		bits = rawdog.get_main_template_bits(config)
 		bits["items"] = f.getvalue()
-		bits["num_items"] = str(len(rawdog.articles.values()))
+		bits["num_items"] = str(len(list(rawdog.articles.values())))
 
 		f = StringIO()
 		f.write('<ul class="paged_output_pages">\n')

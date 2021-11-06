@@ -21,7 +21,7 @@ rawdoglib.plugins.attach_hook("config_option", option)
 
 def filter(rawdog, config, articles):
 	if len(feeds) != 0:
-		articles[:] = [a for a in articles if feeds.has_key(a.feed)]
+		articles[:] = [a for a in articles if a.feed in feeds]
 	return True
 rawdoglib.plugins.attach_hook("output_sorted_filter", filter)
 

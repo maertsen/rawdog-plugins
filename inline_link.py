@@ -18,6 +18,7 @@ you use for the rawdog template.
 Brian Jaress
 """
 
+from builtins import str
 import rawdoglib.plugins
 from re import sub
 
@@ -52,7 +53,7 @@ def inline_link(rawdog, config, feed, article, itembits):
 
   parts['anchor'] = '<a href="%(uri)s">%(short)s</a>'
 
-  for k in parts: parts[k] = unicode(parts[k]).encode(inline_charset)
+  for k in parts: parts[k] = str(parts[k]).encode(inline_charset)
   parts['html'] = (parts['html'] % parts).encode('base64')
   for k in ('uri', 'anchor'):
     parts[k] = (parts[k] % parts)

@@ -1,9 +1,11 @@
+from __future__ import print_function
 # rawdog plugin to write received articles out as Atom files
 # Copyright 2005, 2009, 2013 Adam Sampson <ats@offog.org>
 
 # This needs my atomwriter.py module, which is available from:
 #   http://offog.org/code/misccode.html
 
+from builtins import object
 import rawdoglib.plugins
 import atomwriter
 import os, time, errno, traceback
@@ -11,7 +13,7 @@ from pprint import pprint
 
 class ArchiverException(Exception): pass
 
-class Archiver:
+class Archiver(object):
 	def __init__(self):
 		self.articles = {}
 		self.feeds = {}
@@ -33,7 +35,7 @@ class Archiver:
 	def shutdown(self, rawdog, config):
 		day = time.strftime("%Y-%m-%d", time.localtime(self.now))
 
-		for id, feed_info in self.feeds.items():
+		for id, feed_info in list(self.feeds.items()):
 			entries = self.articles[id]
 			if id == "":
 				id = "unknown"
@@ -52,7 +54,8 @@ class Archiver:
 				fn = "%s/%s-%s-%d.atom" % (dn, id, day, seq)
 				try:
 					fd = os.open(fn, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-				except OSError, (no, s):
+				except OSError as xxx_todo_changeme:
+					(no, s) = xxx_todo_changeme.args
 					if no == errno.EEXIST:
 						seq += 1
 						continue
@@ -66,7 +69,7 @@ class Archiver:
 			try:
 				atomwriter.write_atom(atom_data, f)
 			except:
-				print "Error archiving article:"
+				print("Error archiving article:")
 				traceback.print_exc()
 				pprint(atom_data)
 			f.close()

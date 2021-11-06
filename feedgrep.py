@@ -36,6 +36,8 @@ Only one regular expression can be specified per feed.
 
 """
 
+from builtins import range
+from builtins import object
 import rawdoglib.rawdog
 import rawdoglib.plugins
 import re
@@ -44,7 +46,7 @@ __version__ = "1.0"
 __author__ = "Steve Atwell <atwell@uiuc.edu>"
 __date__ = "$Date: 2005-01-22 21:07:56 -0600 (Sat, 22 Jan 2005) $"
 
-class _RECache:
+class _RECache(object):
 	def __init__(self):
 		self._cache = {}
 
@@ -69,7 +71,7 @@ def grep(rawdog, config, article, ignore):
 	ignore.value = False
 	feedargs = rawdog.feeds[article.feed].args
 
-	if feedargs.has_key("grep"):
+	if "grep" in feedargs:
 		reflags = re.U + re.S
 		invert = False
 		strip = False
@@ -98,7 +100,7 @@ def grep(rawdog, config, article, ignore):
 		# it if the strip option is set
 		text = []
 		for piece in ["title", "summary"]:
-			if (article.entry_info.has_key(piece)):
+			if (piece in article.entry_info):
 				text.append(article.entry_info[piece])
 
 		# Strip text.  First replace HTML tags and newlines with

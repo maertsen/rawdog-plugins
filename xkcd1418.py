@@ -2,6 +2,7 @@
 # (mostly as an example of how to apply regexps to feed descriptions)
 # Copyright 2017 Adam Sampson <ats@offog.org>
 
+from builtins import range
 import rawdoglib.plugins
 import re
 

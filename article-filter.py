@@ -1,3 +1,4 @@
+from __future__ import print_function
 # rawdog plugin to filter articles on various criteria
 # Copyright 2006, 2009, 2012, 2013 Adam Sampson <ats@offog.org>
 #
@@ -22,6 +23,7 @@
 # feed 30m http://boingboing.net/rss.xml
 #   filter hide ; show author "^Mark"
 
+from builtins import range
 import rawdoglib.plugins, sys, re
 
 def parse_quoted(s):
@@ -55,7 +57,7 @@ def match_article(rawdog, article):
 		i = 0
 		while i < len(vs):
 			if vs[i] not in ("show", "hide"):
-				print >>sys.stderr, "Expected show or hide but got " + vs[i] + " in filter: " + filter
+				print("Expected show or hide but got " + vs[i] + " in filter: " + filter, file=sys.stderr)
 				return True
 			value = (vs[i] == "hide")
 			matched = True
@@ -63,17 +65,17 @@ def match_article(rawdog, article):
 			while i < len(vs) and vs[i] != ";":
 				info = article.entry_info
 				if i + 1 >= len(vs):
-					print >>sys.stderr, "Expected regexp at end of filter: " + filter
+					print("Expected regexp at end of filter: " + filter, file=sys.stderr)
 					return True
 				if not vs[i] in info:
-					print >>sys.stderr, "Bad field name " + vs[i] + " in filter: " + filter
+					print("Bad field name " + vs[i] + " in filter: " + filter, file=sys.stderr)
 					return True
 				try:
 					m = re.search(vs[i + 1], info[vs[i]])
 					if m is None:
 						matched = False
 				except re.error:
-					print >>sys.stderr, "Bad regular expression " + vs[i + 1] + " in filter: " + filter
+					print("Bad regular expression " + vs[i + 1] + " in filter: " + filter, file=sys.stderr)
 					return True
 				i += 2
 			if matched:
@@ -86,7 +88,7 @@ def match_article(rawdog, article):
 def output_sorted_filter(rawdog, config, articles):
 	orig = len(articles)
 	config.log("article-filter: examining ", orig, " articles")
-	for i in reversed(range(len(articles))):
+	for i in reversed(list(range(len(articles)))):
 		if match_article(rawdog, articles[i]):
 			del articles[i]
 	config.log("article-filter: hid ", orig - len(articles), " articles")

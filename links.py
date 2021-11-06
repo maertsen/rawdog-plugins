@@ -19,7 +19,7 @@ import rawdoglib.plugins
 from rawdoglib.rawdog import string_to_html
 
 def links_config(config, name, value):
-	if not config.config.has_key('links'):
+	if 'links' not in config.config:
 		config['links'] = []
 	if name == "link":
 		config['links'].append(value.split(None, 1))

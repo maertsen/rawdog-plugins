@@ -37,18 +37,22 @@ If you're using another plugin that orders the articles differently, this
 will not work very well.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
 import os, time, datetime, calendar
 import rawdoglib.plugins
 from rawdoglib.rawdog import DayWriter, write_ascii, format_time, fill_template, safe_ftime, encode_references, get_system_encoding
-from StringIO import StringIO
+from io import StringIO
 
 def safe_strftime(obj, format):
 	"""Call the strftime method on an object, and convert the result to
 	ASCII-encoded HTML."""
-	u = unicode(obj.strftime(format), get_system_encoding())
+	u = str(obj.strftime(format), get_system_encoding())
 	return encode_references(u)
 
-class DatedOutput:
+class DatedOutput(object):
 	def __init__(self):
 		self.page_date_format = "%Y-%m-%d"
 		self.calendar_month_format = "%B %Y"
@@ -84,7 +88,7 @@ class DatedOutput:
 
 		# Sort and reverse the list of dates, so we have the newest
 		# first.
-		dates = self.output_files.keys()
+		dates = list(self.output_files.keys())
 		dates.sort()
 		dates.reverse()
 
@@ -113,7 +117,7 @@ class DatedOutput:
 		# Find links to the previous and next months, if they exist.
 		prev_date = None
 		next_date = None
-		dates = self.output_files.keys()
+		dates = list(self.output_files.keys())
 		dates.sort()
 		for date in dates:
 			t = time.strptime(date, self.page_date_format)
@@ -135,7 +139,7 @@ class DatedOutput:
 		f = StringIO()
 
 		last_month = None
-		dates = self.output_files.keys()
+		dates = list(self.output_files.keys())
 		dates.sort()
 		dates.reverse()
 		for date in dates:
@@ -214,7 +218,7 @@ class DatedOutput:
 
 		bits = rawdog.get_main_template_bits(config)
 		bits["items"] = self.f.getvalue()
-		bits["num_items"] = str(len(rawdog.articles.values()))
+		bits["num_items"] = str(len(list(rawdog.articles.values())))
 		bits["dated_output_pages"] = self.generate_list()
 		bits["dated_output_calendar"] = self.generate_calendar()
 		bits["dated_output_calendars"] = self.generate_calendars()

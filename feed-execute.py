@@ -11,13 +11,13 @@
 import rawdoglib.plugins, os
 
 def pre_update_feed(rawdog, config, feed):
-	if feed.args.has_key("pre-execute"):
+	if "pre-execute" in feed.args:
 		os.system(feed.args["pre-execute"])
 	return True
 rawdoglib.plugins.attach_hook("pre_update_feed", pre_update_feed)
 
 def post_update_feed(rawdog, config, feed, seen):
-	if feed.args.has_key("post-execute"):
+	if "post-execute" in feed.args:
 		os.system(feed.args["post-execute"])
 	return True
 rawdoglib.plugins.attach_hook("post_update_feed", post_update_feed)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Feedwise Plugin version 0.2 for Rawdog.
 # Copyright 2005 Ian Glover <ian@manicai.net>
 # Copyright 2006 Virgil Bucoci
@@ -17,9 +18,12 @@
 #   http://lists.us-lot.org/pipermail/rawdog-users/2006-September/000254.html)
 # * minor code cleanup
 
+from past.builtins import cmp
+from builtins import range
+from builtins import object
 import rawdoglib.plugins
 
-class FeedwisePlugin:
+class FeedwisePlugin(object):
     def __init__(self):
         self.last_feed = None
         self.feed_no = 0
@@ -29,10 +33,10 @@ class FeedwisePlugin:
         # when this plugin is used.  We disable them just to be safe.
         msg = "FeedwisePlugin: %s config option is NOT used when this plugin is active."
         if config["daysections"]:
-            print msg % "daysections"
+            print(msg % "daysections")
             config["daysections"] = 0 # not really necessary
         if config["timesections"]:
-            print msg % "timesections"
+            print(msg % "timesections")
             config["timesections"] = 0 # not really necessary
         try:
             articles_per_feed = config["articles_per_feed"]
@@ -93,8 +97,8 @@ class FeedwisePlugin:
 
         if self.last_feed != feed:       # A new feed
             if self.last_feed != None:   # not the first feed
-                print >>f, '</ol></div>\n'
-            print >>f,  basic_divider
+                print('</ol></div>\n', file=f)
+            print(basic_divider, file=f)
             self.feed_no += 1
             self.last_feed = feed
         return False

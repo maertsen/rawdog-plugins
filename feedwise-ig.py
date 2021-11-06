@@ -7,9 +7,12 @@
 # The article_per_feed option can be specified in the config file to set the
 # maximum number of articles to show per feed.
 
+from past.builtins import cmp
+from builtins import range
+from builtins import object
 import rawdoglib.plugins
 
-class FeedwisePlugin:
+class FeedwisePlugin(object):
     def __init__(self):
         self.last_feed = None
 

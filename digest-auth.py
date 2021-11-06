@@ -6,11 +6,14 @@ This is compatible with rawdog's normal basic authentication support, using
 the existing "user" and "password" feed arguments.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import rawdoglib.plugins
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 def add_handlers(rawdog, config, feed, handlers):
-	class DummyPasswordMgr:
+	class DummyPasswordMgr(object):
 		def __init__(self, creds):
 			self.creds = creds
 		def add_password(self, realm, uri, user, passwd):
@@ -18,9 +21,9 @@ def add_handlers(rawdog, config, feed, handlers):
 		def find_user_password(self, realm, authuri):
 			return self.creds
 
-	if feed.args.has_key("user") and feed.args.has_key("password"):
+	if "user" in feed.args and "password" in feed.args:
 		mgr = DummyPasswordMgr((feed.args["user"], feed.args["password"]))
-		handlers.append(urllib2.HTTPDigestAuthHandler(mgr))
+		handlers.append(urllib.request.HTTPDigestAuthHandler(mgr))
 
 rawdoglib.plugins.attach_hook("add_urllib2_handlers", add_handlers)
 

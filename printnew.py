@@ -1,6 +1,7 @@
 # printnew.py: email new entries to ourselves (or anyone we want)
 # Copyright 2005, 2009 Ted T <http://perljam.net/>
 
+from builtins import object
 import rawdoglib.rawdog
 import rawdoglib.plugins
 
@@ -11,7 +12,7 @@ import datetime
 
 from email.MIMEText import MIMEText
 
-class Mailer:
+class Mailer(object):
 	"""email new articles"""
 	def __init__(self):
 		self.mailto = ''
@@ -26,16 +27,16 @@ class Mailer:
 
 		feed = rawdog.feeds[article.feed]
 
-		if article.entry_info.has_key('link'):
+		if 'link' in article.entry_info:
 			self.mail_str += '<a href="' + article.entry_info['link'] + '">'
-		if article.entry_info.has_key('title'):
+		if 'title' in article.entry_info:
 			self.mail_str += article.entry_info['title']
-		if article.entry_info.has_key('link'):
+		if 'link' in article.entry_info:
 			self.mail_str += '</a>'
 
 		self.mail_str += ' [' + feed.get_html_link(config) + ']'
 
-		if article.entry_info.has_key('description'):
+		if 'description' in article.entry_info:
 			self.mail_str += "<br>\n" + article.entry_info['description']
 		# finish up the entry. I like a <hr> between each entry with some spacing.
 		self.mail_str += "<p><hr><br clear=\"all\">\n"

@@ -9,13 +9,15 @@ it's not guaranteed to continue to work in the future. (It's also an example of
 a plugin that doesn't need to import rawdoglib.plugins!)
 """
 
-import urllib2
+from future import standard_library
+standard_library.install_aliases()
+import urllib.request, urllib.error, urllib.parse
 
-orig_get_authorization = urllib2.AbstractDigestAuthHandler.get_authorization
+orig_get_authorization = urllib.request.AbstractDigestAuthHandler.get_authorization
 def my_get_authorization(self, req, chal):
 	base = orig_get_authorization(self, req, chal)
 	if base.find('algorithm=') == -1:
 		base += ', algorithm=MD5'
 	return base
-urllib2.AbstractDigestAuthHandler.get_authorization = my_get_authorization
+urllib.request.AbstractDigestAuthHandler.get_authorization = my_get_authorization
 

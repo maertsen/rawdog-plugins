@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Feedwise Plugin version 0.2 for Rawdog.
 # Copyright 2005 Ian Glover <ian@manicai.net>
 # Copyright 2005 Craig Allen
@@ -11,9 +12,12 @@
 #   __if_divider__ 
 #      __divider__
 #   __endif__
+from past.builtins import cmp
+from builtins import range
+from builtins import object
 import rawdoglib.plugins
 
-class FeedwisePlugin:
+class FeedwisePlugin(object):
     def __init__(self):
         last_feed = None
 
@@ -21,11 +25,11 @@ class FeedwisePlugin:
         # Can't work if daysections or timesections is active.
         if config["daysections"]:
             if config['verbose']:
-                print "Feedwise Plugin: Turning off daysections configuration option."
+                print("Feedwise Plugin: Turning off daysections configuration option.")
             config["daysections"] = 0
         if config["timesections"]:
             if config['verbose']:
-                print "Feedwise Plugin: Turning off timesections configuration option."
+                print("Feedwise Plugin: Turning off timesections configuration option.")
             config["timesections"] = 0
 
     # Scan the sorted list of articles and through away old ones to
@@ -42,7 +46,7 @@ class FeedwisePlugin:
             if feed not in feed_counts:
                 feed_counts[feed] = 1
                 if (feed_counts[prev_feed] > config["articles_per_feed"]) and config['verbose']:
-                    print 'removing %s oldest items from %s' % (feed_counts[prev_feed] - config["articles_per_feed"], prev_feed)
+                    print('removing %s oldest items from %s' % (feed_counts[prev_feed] - config["articles_per_feed"], prev_feed))
                 prev_feed = feed
             else:
                 feed_counts[feed] = feed_counts[feed] + 1
@@ -51,9 +55,9 @@ class FeedwisePlugin:
                 # So use None as a marker for deletion.
                 to_remove.append(articles[i])
         if config['verbose']:
-            print '\nbefore articles removed due to limits in "articles_per_feed":'
-            for fd in feed_counts.keys():
-                print rawdog.feeds[fd].get_html_name(config), '\t', feed_counts[fd]
+            print('\nbefore articles removed due to limits in "articles_per_feed":')
+            for fd in list(feed_counts.keys()):
+                print(rawdog.feeds[fd].get_html_name(config), '\t', feed_counts[fd])
         for x in to_remove:
             articles.remove(x)
         

@@ -5,13 +5,14 @@ articles (found in the feed as slash:department).
 Copyright 2006 BAM
 Coypright 2013 Adam Sampson <ats@offog.org>
 """
+from builtins import object
 import rawdoglib.plugins
 from rawdoglib.rawdog import string_to_html
 
-class Slashdot:
+class Slashdot(object):
     html = '%s\n<p style="font-size:x-small">from the %s dept.</p>'
     def output(self, rawdog, config, feed, article, itembits):
-        if not article.entry_info.has_key('slash_department'):
+        if 'slash_department' not in article.entry_info:
             return True
 
         dept = string_to_html(article.entry_info['slash_department'], config)

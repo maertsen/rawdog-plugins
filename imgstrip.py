@@ -79,9 +79,13 @@ TODO
   - something more general for stripping obnoxious tags: font, style,
     script/javascript (maybe tidy already does part of this?)
 """
+from future import standard_library
+standard_library.install_aliases()
+from future.utils import raise_
+from builtins import object
 import rawdoglib.plugins
 from sgmllib import SGMLParser
-import htmlentitydefs
+import html.entities
 
 class BaseHTMLProcessor(SGMLParser):
     """Base class for creating HTML processing modules
@@ -138,7 +142,7 @@ class BaseHTMLProcessor(SGMLParser):
         # Reconstruct the original entity reference.
         self.pieces.append("&%(ref)s" % locals())
         # standard HTML entities are closed with a semicolon; other entities are not
-        if htmlentitydefs.entitydefs.has_key(ref):
+        if ref in html.entities.entitydefs:
             self.pieces.append(";")
 
     def handle_data(self, text):
@@ -201,7 +205,7 @@ class StripParser(BaseHTMLProcessor):
 
 
 parser = StripParser(verbose=1)
-class ImgStripPlugin:
+class ImgStripPlugin(object):
     """
     Strip img tags from articles.
 
@@ -234,9 +238,9 @@ class ImgStripPlugin:
                 parser = StripParser(value)
                 return False
             else:
-            	raise ValueError, \
+                raise_(ValueError, \
                       "imgstrip error: option '%s' has invalid value '%s'" \
-                      % (name, value)
+                      % (name, value))
         return True
 
 istrip = ImgStripPlugin()

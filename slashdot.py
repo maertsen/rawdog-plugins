@@ -24,10 +24,11 @@ n>
 __endif__
 
 """
+from builtins import object
 import rawdoglib.plugins
 from rawdoglib.rawdog import string_to_html
 
-class Slashdot:
+class Slashdot(object):
     def output(self, rawdog, config, feed, article, itembits):
         try:
             itembits["slash-department"] = string_to_html(article.entry_info['slash_department'], config)

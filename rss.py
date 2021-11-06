@@ -39,6 +39,7 @@
 # If you're using rawdog to produce a planet page, you'll probably want to have
 # "sortbyfeeddate true" in your config file too.
 
+from builtins import object
 import os, time, cgi
 import rawdoglib.plugins, rawdoglib.rawdog
 import libxml2
@@ -57,7 +58,7 @@ def rfc822_date(tm):
     return "%s, %02d %s %04d %02d:%02d:%02d GMT" % \
         (days[tm[6]], tm[2], months[tm[1] - 1], tm[0], tm[3], tm[4], tm[5])
 
-class RSS_Feed:
+class RSS_Feed(object):
     def __init__(self):
         self.options = {
             "outputxml": "rss20.xml",

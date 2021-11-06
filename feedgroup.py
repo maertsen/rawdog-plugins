@@ -10,10 +10,13 @@ with an 'Other' group for articles from feeds without the setting.
 Also generates a header with links to each group with articles.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import os
 import rawdoglib.plugins
 from rawdoglib.rawdog import DayWriter, write_ascii, fill_template
-from StringIO import StringIO
+from io import StringIO
 
 def output_write_files(rawdog, config, articles, article_dates):
 	f_hdr = StringIO()
@@ -22,17 +25,17 @@ def output_write_files(rawdog, config, articles, article_dates):
 	groups = {}
 	other_count = 0
 
-	for url, feed in rawdog.feeds.items():
-		if (feed.args.has_key("define_group")):
+	for url, feed in list(rawdog.feeds.items()):
+		if ("define_group" in feed.args):
 			group = feed.args["define_group"]
 			group = group.replace("_", " ")
-			if (groups.has_key(group)):
+			if (group in groups):
 				groups[group]["feeds"].append(feed)
 			else:
 				groups[group] = {"count" : 0, "feeds" : [feed]}
 
 	f = StringIO()
-	for (key, group) in groups.items():
+	for (key, group) in list(groups.items()):
 		dw = DayWriter(f, config)
 		f.write("<hr>\n")
 		f.write('<h1><a name="' + key + '">' + key + '</a></h1>\n')
@@ -61,7 +64,7 @@ def output_write_files(rawdog, config, articles, article_dates):
 			other_count += 1
 
 	f_hdr.write("<ul>\n")
-	for (key, group) in groups.items():
+	for (key, group) in list(groups.items()):
 		if group["count"]:
 			f_hdr.write('<li><a href="#%(key)s">%(key)s (%(count)d items)</a></li>\n' % {'key' : key, 'count' : group["count"]})
 	if other_count:

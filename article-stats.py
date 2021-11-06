@@ -1,9 +1,11 @@
+from __future__ import print_function
 # When rawdog shuts down, print some simple statistics about articles.
 # Copyright 2005 Adam Sampson <ats@offog.org>
 
+from builtins import object
 import rawdoglib.plugins
 
-class Stats:
+class Stats(object):
 	"""Track counts of articles."""
 	def __init__(self):
 		self.added = 0
@@ -23,7 +25,7 @@ class Stats:
 		return True
 
 	def shutdown(self, rawdog, config):
-		print "%d %d %d %d" % (self.added, self.updated, self.expired, len(rawdog.articles))
+		print("%d %d %d %d" % (self.added, self.updated, self.expired, len(rawdog.articles)))
 		return True
 
 stats = Stats()

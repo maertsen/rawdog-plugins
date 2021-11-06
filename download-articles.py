@@ -17,11 +17,12 @@
 # there, so you'll probably want to use "find" to periodically remove
 # old files from the cache.
 
+from builtins import object
 import rawdoglib.plugins
 from rawdoglib.rawdog import string_to_html
 import subprocess, re
 
-class Downloader:
+class Downloader(object):
 	def __init__(self):
 		self.options = {
 			"downloaddir": "local-cache",
