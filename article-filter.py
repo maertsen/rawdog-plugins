@@ -70,6 +70,13 @@ def match_article(rawdog, article):
 				if not vs[i] in info:
 					print("Bad field name " + vs[i] + " in filter: " + filter, file=sys.stderr)
 					return True
+				# allow searching dicts, e.g. entries[i].tags, by flattening them
+				if type(info[vs[i]]) is not str:
+					try:
+						info[vs[i]] = str(info[vs[i]])
+					except TypeError:
+						print("Unable to search field " + vs[i + 1] + " in filter: " + filter, file=sys.stderr)
+						return True
 				try:
 					m = re.search(vs[i + 1], info[vs[i]])
 					if m is None:
